@@ -99,6 +99,8 @@ deams-pp-aps/
 ├── 📂 codes/                       # Scripts de extração e pré-processamento
 │   ├── extract_sim_bd.py            # Query para dados de Feminicídio — SIM (Base dos Dados)
 │   ├── extract_sinan_bd.py          # Query para dados de Violência Não Letal — SINAN (Base dos Dados)
+│   ├── extract_cnes_bd.py           # Dicionário geolocalizado do CNES para mapear delegacias
+│   ├── merge_sinan_cnes.py          # Unifica o SINAN com as informações espaciais do CNES
 │   ├── data_filter_sicpv.py         # Filtragem e limpeza da base SIPCV (Boletins de Ocorrência SSP-SP)
 │   ├── pipeline_feminicidio.py      # Pipeline de pré-processamento da base de Feminicídio (2015-2022)
 │   └── bd_config.py                 # ⚠️ LOCAL APENAS — contém o Billing ID do Google Cloud. Não versionado.
@@ -106,6 +108,8 @@ deams-pp-aps/
 ├── 📂 dados/                       # Dados brutos e processados (não versionados por tamanho)
 │   ├── sim_feminicidios_sp.csv      # Extraído via BigQuery (SIM) — 7.554 registros
 │   ├── sinan_violencia_sp.csv       # Extraído via BigQuery (SINAN) — 108.427 registros
+│   ├── cnes_sp_geolocalizado.csv    # Dicionário do CNES extraído via BigQuery — 54.883 registros
+│   ├── sinan_cnes_merged.csv        # Base unificada com as coordenadas dos hospitais
 │   ├── Feminicidio_2015_2022.xlsx   # Base da SSP-SP
 │   ├── SIPCV_2026.xlsx              # Base de Boletins de Ocorrência SSP-SP
 │   └── data_sipcv.csv               # SIPCV filtrado e processado
