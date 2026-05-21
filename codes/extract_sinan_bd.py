@@ -8,9 +8,9 @@ from bd_config import BILLING_ID
 
 billing_id = BILLING_ID
 
-# Definir caminho para salvar os dados
-output_dir = r"c:\Users\felip\deams-pp-aps\dados"
-os.makedirs(output_dir, exist_ok=True)
+# Definir caminho para salvar os dados dinamicamente (raiz do projeto -> dados)
+output_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "dados"))
+os.makedirs(output_dir, exist_ok = True)
 output_file = os.path.join(output_dir, "sinan_violencia_sp.csv")
 
 # A query foi otimizada para filtrar o município de São Paulo e pacientes do sexo feminino
@@ -69,11 +69,11 @@ WHERE
 
 print("Iniciando o download dos dados do SINAN via Base dos Dados (BigQuery)...")
 try:
-    df = bd.read_sql(query=query, billing_project_id=billing_id)
+    df = bd.read_sql(query = query, billing_project_id = billing_id)
     print(f"Download concluído! Total de registros encontrados: {len(df)}")
 
     # Salvar em CSV na pasta dados
-    df.to_csv(output_file, index=False, encoding="utf-8")
+    df.to_csv(output_file, index = False, encoding = "utf-8")
     print(f"Dados salvos com sucesso em: {output_file}")
 except Exception as e:
     print(f"Erro ao executar a query: {e}")
