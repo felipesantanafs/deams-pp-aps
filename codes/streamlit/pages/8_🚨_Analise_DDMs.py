@@ -143,7 +143,7 @@ with col2:
     apply_theme(fig_hora, height=400, show_legend=False)
     st.plotly_chart(fig_hora, use_container_width=True)
 
-# ─── Gráfico 3: Evolução Geográfica da Taxa DDM (Mapa Animado) ─────────
+# ─── Gráfico 3: Evolução Geográfica da Taxa DDM (Small Multiples) ────────
 st.markdown("---")
 st.markdown(section_header("📍 Evolução Geográfica da Taxa de Encaminhamento DDM (Base 🏥 SINAN)"), unsafe_allow_html=True)
 
@@ -159,38 +159,37 @@ df_bairro_ano = df_geo.groupby(['ano', 'bairro']).agg(
 df_bairro_ano['taxa_ddm'] = (df_bairro_ano['ddm'] / df_bairro_ano['total']) * 100
 df_bairro_ano = df_bairro_ano[df_bairro_ano['total'] >= 5] # Filtrar ruído por ano
 
-# Ordenar por ano para a animação funcionar corretamente
-df_bairro_ano = df_bairro_ano.sort_values(['ano', 'bairro'])
-
 fig_map = px.scatter_mapbox(
     df_bairro_ano,
     lat="lat", lon="lon",
     size="total", color="taxa_ddm",
-    animation_frame="ano",
+    facet_col="ano", facet_col_wrap=3,
     hover_name="bairro",
     hover_data={"ano": False, "lat": False, "lon": False, "total": True, "taxa_ddm": ':.1f'},
     color_continuous_scale=[(0, COLORS['danger']), (0.5, COLORS['warning']), (1, COLORS['primary'])],
     range_color=[0, df_bairro_ano['taxa_ddm'].quantile(0.95)],
-    size_max=30,
-    zoom=9.5,
+    size_max=20,
+    zoom=8.5,
     center={"lat": -23.5505, "lon": -46.6333},
     mapbox_style="carto-darkmatter",
-    title="Animação: Demanda vs Encaminhamento DDM por Bairro ao Longo do Tempo"
+    title="Mapas Lado-a-Lado (Small Multiples): Demanda vs Encaminhamento DDM (2015-2019)"
 )
 
 fig_map.update_layout(
     margin={"r":0,"t":40,"l":0,"b":0},
     paper_bgcolor='rgba(0,0,0,0)',
-    plot_bgcolor='rgba(0,0,0,0)'
+    plot_bgcolor='rgba(0,0,0,0)',
+    height=700
 )
 
-st.plotly_chart(fig_map, use_container_width=True, height=600)
+st.plotly_chart(fig_map, use_container_width=True)
 
 st.markdown("""
 <div class="insight-box">
-    <strong>Leitura do Mapa Animado:</strong> Use o botão "Play" para ver a evolução temporal. 
-    Bairros com círculos grandes (muitas notificações) e cor vermelha/amarela (baixa taxa de encaminhamento) 
-    são potenciais territórios críticos. Nessas áreas, a ausência de DDMs 24h ou a distância 
-    podem estar criando grandes bolsões de subnotificação policial, e o mapa revela como isso muda (ou não) com o tempo.
+    <strong>Por que esta visualização? (Técnica de <i>Small Multiples</i>)</strong><br>
+    Em vez de um GIF em looping ou vídeos interativos (que obrigam a memória de curto prazo do usuário a lembrar do ano anterior), 
+    apresentamos todos os cenários simultaneamente. Isso permite uma <strong>comparação visual imediata</strong>: 
+    você pode observar facilmente quais bairros (círculos maiores) continuaram vermelhos (baixa taxa DDM) ao longo de todos os 5 anos, 
+    evidenciando a estagnação do acesso institucional na periferia.
 </div>
 """, unsafe_allow_html=True)
