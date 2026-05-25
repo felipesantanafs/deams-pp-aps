@@ -146,26 +146,37 @@ with col_map:
         range_color=[0, 25] if len(df_filt) > 5000 else None
     )
     
-    # Adicionar os marcadores das 9 DDMs
-    ddms_df = pd.DataFrame.from_dict(DDMS, orient='index').reset_index().rename(columns={'index': 'Nome'})
-    
-    fig.add_trace(go.Scattermapbox(
-        lat=ddms_df['lat'],
-        lon=ddms_df['lon'],
-        mode='markers+text',
-        marker=go.scattermapbox.Marker(
-            size=16,
-            color='#FF0000',
-            symbol='circle',
-            opacity=1.0
-        ),
-        text=ddms_df['Nome'],
-        textfont=dict(size=14, color='white', weight='bold'),
-        textposition="top right",
-        hovertemplate="<b>%{text}</b><br>Endereço: %{customdata}<extra></extra>",
-        customdata=ddms_df['end'],
-        name="DDMs"
-    ))
+    # Adicionar cada DDM como trace individual para garantir que TODOS os labels apareçam
+    # (Plotly oculta labels sobrepostos em traces agrupados)
+    text_positions = {
+        "1ª DDM Centro": "top right",
+        "2ª DDM Sul": "top right",
+        "3ª DDM Oeste": "bottom right",
+        "4ª DDM Norte": "top right",
+        "5ª DDM Leste": "bottom left",
+        "6ª DDM Campo Grande": "top right",
+        "7ª DDM Leste (Itaquera)": "top left",
+        "8ª DDM Leste": "bottom right",
+        "9ª DDM Oeste (Pirituba)": "top left",
+    }
+    for nome, info in DDMS.items():
+        fig.add_trace(go.Scattermapbox(
+            lat=[info['lat']],
+            lon=[info['lon']],
+            mode='markers+text',
+            marker=go.scattermapbox.Marker(
+                size=16,
+                color='#FF0000',
+                symbol='circle',
+                opacity=1.0
+            ),
+            text=[nome],
+            textfont=dict(size=13, color='white'),
+            textposition=text_positions.get(nome, "top right"),
+            hovertemplate=f"<b>{nome}</b><br>📍 {info['end']}<extra></extra>",
+            showlegend=False,
+            name=nome
+        ))
     
     fig.update_layout(
         margin={"r":0,"t":0,"l":0,"b":0},
