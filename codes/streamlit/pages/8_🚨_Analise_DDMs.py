@@ -161,16 +161,47 @@ color_range = [
 ]
 
 import pydeck as pdk
+import urllib.request
+import json
 
-# Camada de delimitação física dos bairros
+# Mapeamento de macro-zonas de São Paulo
+ZONAS_SP = {
+    'Centro': (['SE'], [255, 255, 255, 200]), # Branco
+    'Leste': (['ARICANDUVA-FORMOSA-CARRAO', 'CIDADE TIRADENTES', 'ERMELINO MATARAZZO', 'GUAIANASES', 'ITAIM PAULISTA', 'ITAQUERA', 'MOOCA', 'PENHA', 'SAO MATEUS', 'SAO MIGUEL', 'SAPOPEMBA', 'VILA PRUDENTE'], [231, 76, 60, 200]), # Vermelho
+    'Norte': (['CASA VERDE-CACHOEIRINHA', 'FREGUESIA-BRASILANDIA', 'JACANA-TREMEMBE', 'PERUS', 'PIRITUBA-JARAGUA', 'SANTANA-TUCURUVI', 'VILA MARIA-VILA GUILHERME'], [52, 152, 219, 200]), # Azul
+    'Oeste': (['BUTANTA', 'LAPA', 'PINHEIROS'], [46, 204, 113, 200]), # Verde
+    'Sul': (['CAMPO LIMPO', 'CAPELA DO SOCORRO', 'CIDADE ADEMAR', 'IPIRANGA', 'JABAQUARA', "M'BOI MIRIM", 'PARELHEIROS', 'SANTO AMARO', 'VILA MARIANA'], [241, 196, 15, 200]) # Amarelo
+}
+
+# Criar dicionário reverso para busca rápida da cor
+subpref_color_map = {}
+for zona, (subprefs, color) in ZONAS_SP.items():
+    for sp in subprefs:
+        subpref_color_map[sp] = color
+
+# Carregar GeoJSON na memória e injetar cores
+@st.cache_data
+def get_colored_geojson():
+    url = 'https://raw.githubusercontent.com/codigourbano/distritos-sp/master/distritos-sp.geojson'
+    req = urllib.request.urlopen(url)
+    data = json.loads(req.read())
+    for feature in data['features']:
+        subpref = feature['properties'].get('ds_subpref', '')
+        # Atribui a cor da macro-zona ou cinza se não encontrar
+        feature['properties']['line_color'] = subpref_color_map.get(subpref, [200, 200, 200, 100])
+    return data
+
+geojson_data = get_colored_geojson()
+
+# Camada de delimitação física dos bairros com cores por Zona
 geojson_layer = pdk.Layer(
     "GeoJsonLayer",
-    data="https://raw.githubusercontent.com/codigourbano/distritos-sp/master/distritos-sp.geojson",
-    opacity=0.4,
+    data=geojson_data,
+    opacity=0.8,
     stroked=True,
     filled=False,
-    get_line_color=[255, 255, 255, 100],
-    line_width_min_pixels=1,
+    get_line_color="properties.line_color",
+    line_width_min_pixels=2,
 )
 
 # Camada hexagonal 2D para densidade
@@ -201,13 +232,42 @@ r = pdk.Deck(
     tooltip={"text": "Densidade de Ocorrências: {elevationValue}"}
 )
 
+# Legenda HTML Customizada
+legend_html = """
+<div style="display: flex; justify-content: space-between; flex-wrap: wrap; background-color: rgba(30,30,30,0.8); padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #444;">
+    <div style="flex: 1; min-width: 250px;">
+        <h4 style="margin-top: 0; margin-bottom: 10px; color: #fff; font-size: 14px;">Densidade (Hexágonos)</h4>
+        <div style="display: flex; align-items: center; margin-bottom: 5px;"><div style="width: 15px; height: 15px; background-color: rgb(224,224,224); margin-right: 8px;"></div> <span style="font-size: 12px;">Baixa Concentração (< P20)</span></div>
+        <div style="display: flex; align-items: center; margin-bottom: 5px;"><div style="width: 15px; height: 15px; background-color: rgb(52,152,219); margin-right: 8px;"></div> <span style="font-size: 12px;">Área Relevante (P20)</span></div>
+        <div style="display: flex; align-items: center; margin-bottom: 5px;"><div style="width: 15px; height: 15px; background-color: rgb(46,204,113); margin-right: 8px;"></div> <span style="font-size: 12px;">Média Concentração (P50)</span></div>
+        <div style="display: flex; align-items: center; margin-bottom: 5px;"><div style="width: 15px; height: 15px; background-color: rgb(241,196,15); margin-right: 8px;"></div> <span style="font-size: 12px;">Alta Concentração (P80)</span></div>
+        <div style="display: flex; align-items: center; margin-bottom: 5px;"><div style="width: 15px; height: 15px; background-color: rgb(230,126,34); margin-right: 8px;"></div> <span style="font-size: 12px;">Centro (P90)</span></div>
+        <div style="display: flex; align-items: center; margin-bottom: 5px;"><div style="width: 15px; height: 15px; background-color: rgb(231,76,60); margin-right: 8px;"></div> <span style="font-size: 12px;">Subcentro (P95)</span></div>
+        <div style="display: flex; align-items: center;"><div style="width: 15px; height: 15px; background-color: rgb(142,68,173); margin-right: 8px;"></div> <span style="font-size: 12px;">CBD Principal (P99)</span></div>
+    </div>
+    <div style="flex: 1; min-width: 250px;">
+        <h4 style="margin-top: 0; margin-bottom: 10px; color: #fff; font-size: 14px;">Zonas de SP (Linhas)</h4>
+        <div style="display: flex; align-items: center; margin-bottom: 5px;"><div style="width: 20px; height: 3px; background-color: rgb(255,255,255); margin-right: 8px;"></div> <span style="font-size: 12px;">Centro</span></div>
+        <div style="display: flex; align-items: center; margin-bottom: 5px;"><div style="width: 20px; height: 3px; background-color: rgb(52,152,219); margin-right: 8px;"></div> <span style="font-size: 12px;">Zona Norte</span></div>
+        <div style="display: flex; align-items: center; margin-bottom: 5px;"><div style="width: 20px; height: 3px; background-color: rgb(241,196,15); margin-right: 8px;"></div> <span style="font-size: 12px;">Zona Sul</span></div>
+        <div style="display: flex; align-items: center; margin-bottom: 5px;"><div style="width: 20px; height: 3px; background-color: rgb(231,76,60); margin-right: 8px;"></div> <span style="font-size: 12px;">Zona Leste</span></div>
+        <div style="display: flex; align-items: center;"><div style="width: 20px; height: 3px; background-color: rgb(46,204,113); margin-right: 8px;"></div> <span style="font-size: 12px;">Zona Oeste</span></div>
+    </div>
+</div>
+"""
+
+st.markdown(legend_html, unsafe_allow_html=True)
 st.pydeck_chart(r, use_container_width=True)
 
 st.markdown("""
 <div class="insight-box">
-    <strong>Leitura do Mapa Hexagonal:</strong> Diferente de plotar ponto a ponto, esta visualização 
-    agrupa as ocorrências em "bins" hexagonais uniformes (tecnologia H3), eliminando a distorção visual de pontos sobrepostos. 
-    As linhas brancas ao fundo desenham a <strong>delimitação física oficial dos distritos de São Paulo</strong>, permitindo ver exatamente 
-    quais bairros abrigam os "centros e subcentros" de alta concentração de violência contra a mulher.
+    <strong>Interpretação e Zonas de SP:</strong> 
+    As linhas coloridas delineiam as cinco macro-zonas de São Paulo (Norte, Sul, Leste, Oeste e Centro). 
+    Ao cruzar essa delimitação territorial com a densidade hexagonal (H3-style), fica evidente como a demanda 
+    (casos de violência) se concentra ou se espalha. <br><br>
+    
+    Por exemplo, manchas vermelhas/roxas (CBD/Subcentros) nas áreas delimitadas em amarelo (Zona Sul) e vermelho (Zona Leste) 
+    indicam núcleos críticos que exigem a presença imediata de uma DDM ou protocolos de encaminhamento mais robustos. 
+    Diferente de pontos soltos, esta visão revela verdadeiros "polos" de incidência de forma clara e geográfica.
 </div>
 """, unsafe_allow_html=True)
