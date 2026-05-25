@@ -258,6 +258,7 @@ with col_right:
     | 👤 **Perfil das Vítimas** | Sociodemografia e contexto das vítimas |
     | ⏰ **Sazonalidade** | Análise temporal (hora, dia e mês) |
     | 🚨 **Análise DDMs** | Avaliação estatística da cobertura das DDMs |
+    | 🔬 **Modelo Causal (DiD)** | Avaliação de impacto causal via PSM + Diferenças-em-Diferenças |
 
     ---
 
