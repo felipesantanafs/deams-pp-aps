@@ -137,13 +137,13 @@ with col_map:
         df_filt,
         lat="latitude",
         lon="longitude",
-        radius=12,
+        radius=15,
         zoom=10.0,
         center={"lat": -23.5505, "lon": -46.6333},
         mapbox_style="carto-darkmatter",
-        color_continuous_scale="Viridis",
-        opacity=0.6,
-        range_color=[0, 30] if len(df_filt) > 5000 else None
+        color_continuous_scale="Turbo",
+        opacity=0.7,
+        range_color=[0, 25] if len(df_filt) > 5000 else None
     )
     
     # Adicionar os marcadores das 9 DDMs
@@ -154,11 +154,13 @@ with col_map:
         lon=ddms_df['lon'],
         mode='markers+text',
         marker=go.scattermapbox.Marker(
-            size=14,
-            color=COLORS['danger'],
-            symbol='circle'
+            size=16,
+            color='#FF0000',
+            symbol='circle',
+            opacity=1.0
         ),
         text=ddms_df['Nome'],
+        textfont=dict(size=14, color='white', weight='bold'),
         textposition="top right",
         hovertemplate="<b>%{text}</b><br>Endereço: %{customdata}<extra></extra>",
         customdata=ddms_df['end'],
@@ -172,7 +174,7 @@ with col_map:
         showlegend=False
     )
     
-    st.plotly_chart(fig, use_container_width=True, height=600)
+    st.plotly_chart(fig, use_container_width=True, height=650)
 
 with col_info:
     st.markdown("#### 🏢 Lista de DDMs na Capital")
@@ -184,9 +186,11 @@ with col_info:
     
     st.markdown("---")
     st.markdown("""
-    💡 **Visualização**: O mapa de calor destaca a densidade de ocorrências notificadas (manchas coloridas). 
-    As DDMs estão assinaladas com marcadores vermelhos. Isso ajuda a identificar visualmente se as 
-    delegacias estão localizadas próximas às áreas de maior incidência ou se existem vazios de cobertura.
+    💡 **Interpretação do Mapa**:
+    O mapa de calor destaca a densidade de ocorrências notificadas. As DDMs estão assinaladas com marcadores vermelhos.
+    
+    **Por que faltam registros na Zona Oeste e bairros nobres?**
+    O SINAN reflete majoritariamente os atendimentos na rede pública (SUS). Mulheres de classes sociais mais altas (que habitam bairros ricos e parte da Zona Oeste) tendem a usar hospitais e clínicas particulares, onde há grande **subnotificação** da violência no sistema governamental. Isso gera uma 'mancha' concentrada nas regiões periféricas, refletindo tanto a dependência do SUS quanto a desigualdade social.
     """)
 
 st.markdown("<br>", unsafe_allow_html=True)
