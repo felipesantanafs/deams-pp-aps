@@ -20,6 +20,7 @@
 ## 📋 Sumário
 
 - [Sobre o Projeto](#-sobre-o-projeto)
+- [Delegacias na Capital (DDMs 24h vs. Comercial)](#-delegacias-de-defesa-da-mulher-ddms-na-capital)
 - [Problema de Pesquisa](#-problema-de-pesquisa)
 - [Cadeia Causal](#-cadeia-causal)
 - [Metodologia](#-metodologia)
@@ -37,6 +38,26 @@ Este repositório contém o código-fonte, dados e relatórios do projeto de pes
 O estudo combina **ciência de dados descritiva** (mapas de calor territoriais e funil da violência) com **avaliação de impacto causal** (Diferenças-em-Diferenças intra-municipal), produzindo evidências acionáveis para subsidiar a avaliação de políticas sociais e otimizar a rede de proteção à mulher na capital paulista.
 
 **Período de análise padronizado: 2015–2019** (a partir da Lei do Feminicídio até o limite do SINAN disponível).
+
+---
+
+## 🏢 Delegacias de Defesa da Mulher (DDMs) na Capital
+
+O município de São Paulo conta com **9 Delegacias de Defesa da Mulher (DDMs)** de atuação territorial. Destas, **6 unidades operam em regime de plantão 24 horas** e **3 operam exclusivamente em horário comercial (09h às 18h)**.
+
+Abaixo está o detalhamento de funcionamento e localização de cada unidade:
+
+| DDM | Região | Endereço | Funcionamento |
+| :--- | :--- | :--- | :--- |
+| **1ª DDM Centro** | Centro / Sé | Rua Bittencourt Rodrigues, 200 | 🟢 **24 Horas** |
+| **2ª DDM Sul** | Zona Sul / Saúde | Avenida 11 de Junho, 89 | 🟢 **24 Horas** |
+| **3ª DDM Oeste** | Zona Oeste / Jaguaré | Av. Corifeu de Azevedo Marques, 4300 | 🕒 **Horário Comercial (09h-18h)** |
+| **4ª DDM Norte** | Zona Norte / Freguesia do Ó | Avenida Itaberaba, 731 | 🟢 **24 Horas** |
+| **5ª DDM Leste** | Zona Leste / Tatuapé | R. Dr. Corinto Baldoino Costa, 400 | 🟢 **24 Horas** |
+| **6ª DDM Campo Grande** | Zona Sul / Santo Amaro | Rua Sargento Manoel Barbosa da Silva, 115 | 🕒 **Horário Comercial (09h-18h)** |
+| **7ª DDM Leste (Itaquera)** | Zona Leste / Itaquera | Rua Sábado D'Angelo, 46 | 🟢 **24 Horas** |
+| **8ª DDM Leste** | Zona Leste / Jd. Marília | Avenida Osvaldo Valle Cordeiro, 190 | 🟢 **24 Horas** |
+| **9ª DDM Oeste (Pirituba)** | Zona Oeste / Pirituba | Avenida Menotti Laudísio, 286 | 🕒 **Horário Comercial (09h-18h)** |
 
 ---
 

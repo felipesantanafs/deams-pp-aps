@@ -22,15 +22,15 @@ st.markdown("---")
 
 # --- Coordenadas das 9 DDMs (Capital) ---
 DDMS = {
-    "1ª DDM Centro": {"lat": -23.5436, "lon": -46.6305, "end": "R. Bittencourt Rodrigues, 200"},
-    "2ª DDM Sul": {"lat": -23.5989, "lon": -46.6344, "end": "Av. 11 de Junho, 89"},
-    "3ª DDM Oeste": {"lat": -23.5567, "lon": -46.7444, "end": "Av. Corifeu de Azevedo Marques, 4300"},
-    "4ª DDM Norte": {"lat": -23.4811, "lon": -46.6827, "end": "Av. Itaberaba, 731"},
-    "5ª DDM Leste": {"lat": -23.5381, "lon": -46.5744, "end": "R. Dr. Corinto Baldoino Costa, 400"},
-    "6ª DDM Campo Grande": {"lat": -23.6642, "lon": -46.7568, "end": "R. Sarg. Manoel B. Silva, 115"},
-    "7ª DDM Leste (Itaquera)": {"lat": -23.5403, "lon": -46.4526, "end": "R. Sabado D'Angelo, 46"},
-    "8ª DDM Leste": {"lat": -23.5894, "lon": -46.4789, "end": "Av. Osvaldo Valle Cordeiro, 190"},
-    "9ª DDM Oeste (Pirituba)": {"lat": -23.4769, "lon": -46.7314, "end": "Av. Menotti Laudísio, 286"}
+    "1ª DDM Centro": {"lat": -23.5436, "lon": -46.6305, "end": "R. Bittencourt Rodrigues, 200", "func": "24 Horas"},
+    "2ª DDM Sul": {"lat": -23.5989, "lon": -46.6344, "end": "Av. 11 de Junho, 89", "func": "24 Horas"},
+    "3ª DDM Oeste": {"lat": -23.5567, "lon": -46.7444, "end": "Av. Corifeu de Azevedo Marques, 4300", "func": "Horário Comercial (09h-18h)"},
+    "4ª DDM Norte": {"lat": -23.4811, "lon": -46.6827, "end": "Av. Itaberaba, 731", "func": "24 Horas"},
+    "5ª DDM Leste": {"lat": -23.5381, "lon": -46.5744, "end": "R. Dr. Corinto Baldoino Costa, 400", "func": "24 Horas"},
+    "6ª DDM Campo Grande": {"lat": -23.6642, "lon": -46.7568, "end": "R. Sarg. Manoel B. Silva, 115", "func": "Horário Comercial (09h-18h)"},
+    "7ª DDM Leste (Itaquera)": {"lat": -23.5403, "lon": -46.4526, "end": "R. Sabado D'Angelo, 46", "func": "24 Horas"},
+    "8ª DDM Leste": {"lat": -23.5894, "lon": -46.4789, "end": "Av. Osvaldo Valle Cordeiro, 190", "func": "24 Horas"},
+    "9ª DDM Oeste (Pirituba)": {"lat": -23.4769, "lon": -46.7314, "end": "Av. Menotti Laudísio, 286", "func": "Horário Comercial (09h-18h)"}
 }
 
 df_sinan = load_sinan_cnes()
@@ -173,7 +173,7 @@ with col_map:
             text=[nome.upper()], # Texto em maiúsculas (Mapbox não suporta <b>)
             textfont=dict(size=14, color='white', family='Arial Black'),
             textposition=text_positions.get(nome, "top right"),
-            hovertemplate=f"<b>{nome}</b><br>📍 {info['end']}<extra></extra>",
+            hovertemplate=f"<b>{nome}</b><br>📍 {info['end']}<br>🕒 {info['func']}<extra></extra>",
             showlegend=False,
             name=nome
         ))
@@ -202,8 +202,9 @@ with col_info:
     st.markdown("As 9 Delegacias de Defesa da Mulher atualmente em operação:")
     
     for nome, info in DDMS.items():
-        st.markdown(f"**{nome}**")
-        st.caption(f"📍 {info['end']}")
+        func_badge = "🟢 24h" if "24 Horas" in info['func'] else "🕒 Comercial"
+        st.markdown(f"**{nome}** — {func_badge}")
+        st.caption(f"📍 {info['end']} | 🕒 {info['func']}")
 
 st.markdown("<br>", unsafe_allow_html=True)
 

@@ -20,6 +20,19 @@ Apesar da relevância, muitas análises carecem de uma visão localizada (intra-
 
 Assim, levanta-se a seguinte problematização: As DDMs que funcionam 24 hrs têm maior impacto no aumento de registros (redução da cifra oculta) e na prevenção de feminicídios em seus bairros de abrangência, em comparação àquelas que funcionam apenas em horário comercial?
 
+Para fins desta pesquisa, a rede territorial do município de São Paulo é composta por 9 Delegacias de Defesa da Mulher (DDM), divididas da seguinte forma:
+- DDMs 24 Horas (Grupo de Tratamento potencial):
+  1. 1ª DDM Centro (Sé)
+  2. 2ª DDM Sul (Saúde)
+  3. 4ª DDM Norte (Freguesia do Ó)
+  4. 5ª DDM Leste (Tatuapé)
+  5. 7ª DDM Leste (Itaquera)
+  6. 8ª DDM Leste (Jardim Marília)
+- DDMs de Horário Comercial (Grupo de Controle ativo - 09h às 18h):
+  1. 3ª DDM Oeste (Jaguaré)
+  2. 6ª DDM Campo Grande (Santo Amaro)
+  3. 9ª DDM Oeste (Pirituba)
+
 3.2 Viés de Notificação e Causalidade Reversa
 Avaliar o impacto apenas pelas denúncias gera viés: uma nova DDM 24h tende a aumentar os registros pois facilita o acesso, reduzindo a cifra oculta. Para resolver isso, o projeto integra os dados de feminicídios (SSP e SIM) e de notificações de agressões em saúde (SINAN), que possuem dinâmicas de reporte distintas, permitindo cruzar a ótica policial (institucional) com a ótica epidemiológica (de saúde) para construir uma métrica de resultado robusta e neutra.
 

@@ -62,26 +62,26 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-with st.expander("📍 Ver endereços das 9 DDMs na capital"):
+with st.expander("📍 Ver endereços e horários das 9 DDMs na capital"):
     st.markdown("""
     **• Centro**
-    - **1ª DDM Centro**: Rua Bittencourt Rodrigues, 200 - Sé
+    - **1ª DDM Centro**: Rua Bittencourt Rodrigues, 200 - Sé | 🟢 **Atendimento 24h**
     
     **• Zona Leste**
-    - **5ª DDM Leste**: Rua Doutor Corinto Baldoino Costa, 400 - Tatuapé
-    - **7ª DDM Leste**: Rua Sabado D'Angelo, 46 - Itaquera
-    - **8ª DDM São Paulo**: Avenida Osvaldo Valle Cordeiro, 190 - Jardim Marília
+    - **5ª DDM Leste**: Rua Doutor Corinto Baldoino Costa, 400 - Tatuapé | 🟢 **Atendimento 24h**
+    - **7ª DDM Leste (Itaquera)**: Rua Sabado D'Angelo, 46 - Itaquera | 🟢 **Atendimento 24h**
+    - **8ª DDM Leste**: Avenida Osvaldo Valle Cordeiro, 190 - Jardim Marília | 🟢 **Atendimento 24h**
     
     **• Zona Oeste**
-    - **3ª DDM Oeste**: Av. Corifeu de Azevedo Marques, 4.300 (no 93° DP) - Jaguaré
-    - **9ª DDM Oeste**: Av. Menotti Laudísio, 286 (ao lado do 87° DP) - Pirituba
+    - **3ª DDM Oeste**: Av. Corifeu de Azevedo Marques, 4.300 (no 93° DP) - Jaguaré | 🕒 **Horário Comercial (09h às 18h)**
+    - **9ª DDM Oeste (Pirituba)**: Av. Menotti Laudísio, 286 (ao lado do 87° DP) - Pirituba | 🕒 **Horário Comercial (09h às 18h)**
     
     **• Zona Norte**
-    - **4ª DDM Norte**: Avenida Itaberaba, 731 - Freguesia do Ó
+    - **4ª DDM Norte**: Avenida Itaberaba, 731 - Freguesia do Ó | 🟢 **Atendimento 24h**
     
     **• Zona Sul**
-    - **2ª DDM Sul**: Avenida 11 de Junho, 89 - Saúde
-    - **6ª DDM Campo Grande**: Rua Sargento Manoel Barbosa da Silva, 115 - Campo Grande
+    - **2ª DDM Sul**: Avenida 11 de Junho, 89 - Saúde | 🟢 **Atendimento 24h**
+    - **6ª DDM Campo Grande**: Rua Sargento Manoel Barbosa da Silva, 115 - Campo Grande | 🕒 **Horário Comercial (09h às 18h)**
     """)
 
 st.markdown("<br>", unsafe_allow_html=True)
