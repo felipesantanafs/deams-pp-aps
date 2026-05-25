@@ -143,48 +143,4 @@ with col2:
     apply_theme(fig_hora, height=400, show_legend=False)
     st.plotly_chart(fig_hora, use_container_width=True)
 
-# ─── Gráfico 3: Identificação de Zonas Críticas (Treemap) ────────────────────
-st.markdown("---")
-st.markdown(section_header("📍 Zonas Críticas de Demanda vs Resposta (Mapa de Árvore)"), unsafe_allow_html=True)
 
-# Agregar dados por Bairro
-df_bairro = df_filt.groupby('bairro').agg(
-    total=('encaminhamento_delegacia_mulher', 'count'),
-    ddm=('encaminhamento_delegacia_mulher', 'sum')
-).reset_index()
-
-df_bairro['taxa_ddm'] = (df_bairro['ddm'] / df_bairro['total']) * 100
-df_bairro = df_bairro[df_bairro['total'] >= 10] # Filtrar ruído (bairros com menos de 10 casos)
-
-# Para não sobrecarregar visualmente, pegar os top 100 bairros com mais casos
-df_bairro_top = df_bairro.sort_values('total', ascending=False).head(100)
-
-fig_tree = px.treemap(
-    df_bairro_top,
-    path=[px.Constant("Bairros de São Paulo"), 'bairro'],
-    values='total',
-    color='taxa_ddm',
-    color_continuous_scale=[(0, COLORS['danger']), (0.5, COLORS['warning']), (1, COLORS['primary'])],
-    range_color=[df_bairro_top['taxa_ddm'].min(), df_bairro_top['taxa_ddm'].max()],
-    hover_data={'taxa_ddm': ':.1f', 'total': True},
-    labels={'taxa_ddm': 'Taxa Encam. DDM (%)', 'total': 'Notificações (SINAN)'}
-)
-
-fig_tree.update_layout(
-    margin=dict(t=30, l=10, r=10, b=10),
-    paper_bgcolor='rgba(0,0,0,0)',
-    plot_bgcolor='rgba(0,0,0,0)',
-    coloraxis_colorbar=dict(title="Taxa DDM (%)")
-)
-
-st.plotly_chart(fig_tree, use_container_width=True, height=600)
-
-st.markdown("""
-<div class="insight-box">
-    <strong>Leitura do Mapa de Árvore (Treemap):</strong> Trocamos a visão geográfica pesada por esta visualização analítica ultrarrápida. 
-    Aqui, o <strong>tamanho de cada bloco</strong> representa o volume absoluto de ocorrências no bairro (a demanda). 
-    A <strong>cor do bloco</strong> indica a resposta institucional (Taxa de Encaminhamento à DDM), onde blocos vermelhos indicam baixa taxa e os azuis/verdes indicam alta taxa. <br><br>
-    
-    <strong>Insight Direto:</strong> Procure pelos <strong>grandes blocos vermelhos</strong>. Eles são as zonas críticas absolutas do município: territórios com altíssima demanda de violência contra a mulher, mas onde a articulação com a Delegacia da Mulher está falhando de forma sistêmica.
-</div>
-""", unsafe_allow_html=True)
