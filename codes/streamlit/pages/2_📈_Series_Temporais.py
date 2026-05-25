@@ -30,9 +30,9 @@ with col_f1:
     ano_range = st.slider("Período SINAN", min_value=int(min(anos_disp)), max_value=int(max(anos_disp)),
                           value=(2015, 2019), key="ts_ano")
 with col_f2:
-    tipo_violencia = st.multiselect("Tipo de Violência (SINAN)", 
+    tipo_violencia = st.multiselect("Tipo de Violência (Base 🏥 SINAN)", 
         ["Violência Física", "Ameaça", "Violência Psicológica", "Violência Sexual"],
-        default=["Violência Física", "Ameaça"])
+        default=["Violência Física", "Ameaça", "Violência Psicológica", "Violência Sexual"])
 
 df_filt = df_sinan[(df_sinan['ano'] >= ano_range[0]) & (df_sinan['ano'] <= ano_range[1])].copy()
 
@@ -53,12 +53,19 @@ st.markdown("<br>", unsafe_allow_html=True)
 # ─── Gráfico: Série Mensal SINAN ─────────────────────────────────────
 st.markdown(section_header("📅 Série Mensal de Notificações (SINAN)"), unsafe_allow_html=True)
 
-# Agregar por mês
-df_filt_valid = df_filt[df_filt['data_ocorrencia'].notna()].copy()
+# Agregar por mês (restringido estritamente ao período do filtro para evitar distorções de digitação de datas)
+df_filt_valid = df_filt[
+    df_filt['data_ocorrencia'].notna() &
+    (df_filt['data_ocorrencia'] >= f"{ano_range[0]}-01-01") &
+    (df_filt['data_ocorrencia'] <= f"{ano_range[1]}-12-31")
+].copy()
+
 monthly = df_filt_valid.set_index('data_ocorrencia').resample('ME').agg(
     total=('ano', 'count'),
     violencia_fisica=('ocorreu_violencia_fisica', 'sum'),
     ameaca=('meio_ameaca', 'sum'),
+    violencia_psicologica=('ocorreu_violencia_psicologica', 'sum'),
+    violencia_sexual=('ocorreu_violencia_sexual', 'sum'),
 ).reset_index()
 
 fig1 = go.Figure()
@@ -66,12 +73,14 @@ fig1 = go.Figure()
 mapping = {
     "Violência Física": ('violencia_fisica', COLORS['warning'], 'Violência Física'),
     "Ameaça": ('ameaca', COLORS['highlight'], 'Ameaça'),
+    "Violência Psicológica": ('violencia_psicologica', COLORS['secondary'], 'Violência Psicológica'),
+    "Violência Sexual": ('violencia_sexual', COLORS['danger'], 'Violência Sexual'),
 }
 
 # Sempre mostrar total
 fig1.add_trace(go.Scatter(
     x=monthly['data_ocorrencia'], y=monthly['total'],
-    name='Total Notificações',
+    name='Total Notificações (SINAN)',
     mode='lines',
     line=dict(color=COLORS['accent'], width=2.5),
     fill='tozeroy',
@@ -84,13 +93,13 @@ for tipo in tipo_violencia:
         col, color, label = mapping[tipo]
         fig1.add_trace(go.Scatter(
             x=monthly['data_ocorrencia'], y=monthly[col],
-            name=label,
+            name=f"{label} (SINAN)",
             mode='lines',
             line=dict(color=color, width=2),
             hovertemplate=f'<b>%{{x|%b %Y}}</b><br>{label}: %{{y:,.0f}}<extra></extra>',
         ))
 
-fig1.update_layout(title="Evolução Mensal das Notificações de Violência", xaxis_title="Mês", yaxis_title="Nº de Registros")
+fig1.update_layout(title="Evolução Mensal das Notificações de Violência (Base 🏥 SINAN)", xaxis_title="Mês", yaxis_title="Nº de Registros")
 apply_theme(fig1, height=450)
 st.plotly_chart(fig1, use_container_width=True)
 
@@ -131,10 +140,10 @@ with col_sim_l:
     st.plotly_chart(fig2, use_container_width=True)
 
 with col_sim_r:
-    st.markdown("#### Resumo SIM")
+    st.markdown("#### Resumo de Óbitos (⚰️ SIM)")
     sim_total = df_sim.groupby('ano').size().reset_index(name='Óbitos')
     sim_total.columns = ['Ano', 'Óbitos']
-    st.dataframe(sim_total, hide_index=True, use_container_width=True, height=400)
+    st.dataframe(sim_total, hide_index=True, use_container_width=True)
 
 # ─── Gráfico: Taxa de letalidade implícita ────────────────────────────
 st.markdown(section_header("📉 Taxa de Letalidade Implícita"), unsafe_allow_html=True)

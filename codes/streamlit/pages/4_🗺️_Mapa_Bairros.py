@@ -17,7 +17,7 @@ st.set_page_config(page_title="Mapa de Bairros | DDM", page_icon="🗺️", layo
 st.markdown(metric_card_css(), unsafe_allow_html=True)
 
 st.markdown("# 🗺️ Mapa de Incidência por Bairros")
-st.markdown("*Concentração espacial de ocorrências agregada por bairro/distrito na cidade de São Paulo.*")
+st.markdown("*Concentração espacial de ocorrências agregada por bairro/distrito na cidade de São Paulo (Base 🏥 SINAN).*")
 st.markdown("---")
 
 df_sinan = load_sinan_cnes()
@@ -25,7 +25,7 @@ df_sinan = load_sinan_cnes()
 # Filtros
 col1, col2 = st.columns(2)
 with col1:
-    ano_range = st.slider("Período SINAN", 2015, 2019, (2015, 2019), key="map_ano")
+    ano_range = st.slider("Período (Base 🏥 SINAN)", 2015, 2019, (2015, 2019), key="map_ano")
 with col2:
     tipo_violencia = st.selectbox(
         "Filtrar por Tipo de Violência (Opcional)",
@@ -62,7 +62,7 @@ df_bairro = df_bairro[
     (df_bairro['lon'] > -46.9) & (df_bairro['lon'] < -46.3)
 ]
 
-st.markdown(section_header(f"📍 Mapa de Bolhas: Bairros ({ano_range[0]}-{ano_range[1]})"), unsafe_allow_html=True)
+st.markdown(section_header(f"📍 Mapa de Bolhas: Demandas por Bairro (Base 🏥 SINAN - {ano_range[0]}-{ano_range[1]})"), unsafe_allow_html=True)
 st.markdown("Cada círculo representa um bairro. O **tamanho** e a **cor** indicam o volume de notificações.")
 
 # Ajuste escala de cores baseada em percentis para melhor visualização

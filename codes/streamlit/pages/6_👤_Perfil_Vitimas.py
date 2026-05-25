@@ -17,31 +17,41 @@ st.set_page_config(page_title="Perfil das Vítimas | DDM", page_icon="👤", lay
 st.markdown(metric_card_css(), unsafe_allow_html=True)
 
 st.markdown("# 👤 Perfil das Vítimas")
-st.markdown("*Caracterização sociodemográfica e contextual da violência*")
+st.markdown("*Caracterização sociodemográfica e contextual da violência física/sexual/psicológica (🏥 SINAN) e feminicídios (⚰️ SIM/DataSUS)*")
 st.markdown("---")
+
+st.markdown("""
+<div class="insight-box">
+    ℹ️ <strong>Especificação das Fontes de Dados</strong>:
+    <ul>
+        <li><strong>🏥 Base SINAN (Notificações de Violência)</strong>: Registros de violência contra a mulher notificados no sistema de saúde. Utilizada para idade, raça/cor da vítima, relação com o autor, tipos de violência, meios utilizados e local da ocorrência.</li>
+        <li><strong>⚰️ Base SIM/DataSUS (Feminicídios/Óbitos)</strong>: Registros de óbitos por agressão contra mulheres (causa básica de morte). Utilizada na análise comparativa de Raça/Cor das vítimas fatais.</li>
+    </ul>
+</div>
+""", unsafe_allow_html=True)
 
 # ─── Dados ────────────────────────────────────────────────────────────
 df_sinan = load_sinan_cnes()
 df_sim = load_sim()
 
 # Filtro
-ano_range = st.slider("Período SINAN", 2015, 2019, (2015, 2019), key="perfil_ano")
+ano_range = st.slider("Período SINAN/SIM", 2015, 2019, (2015, 2019), key="perfil_ano")
 df_filt = df_sinan[(df_sinan['ano'] >= ano_range[0]) & (df_sinan['ano'] <= ano_range[1])].copy()
 
 # ─── KPIs ─────────────────────────────────────────────────────────────
 c1, c2, c3, c4 = st.columns(4)
 idade_media = df_filt['idade_paciente'].dropna().mean()
 with c1:
-    st.markdown(render_metric("Idade Média", f"{idade_media:.1f} anos"), unsafe_allow_html=True)
+    st.markdown(render_metric("Idade Média (SINAN)", f"{idade_media:.1f} anos"), unsafe_allow_html=True)
 with c2:
     pct_conjugue = (df_filt['autor_conjugue'].sum() + df_filt['autor_ex_conjugue'].sum()) / len(df_filt) * 100
-    st.markdown(render_metric("Autor: (Ex)Cônjuge", f"{pct_conjugue:.1f}%", "Violência íntima"), unsafe_allow_html=True)
+    st.markdown(render_metric("Autor: (Ex)Cônjuge (SINAN)", f"{pct_conjugue:.1f}%", "Violência íntima"), unsafe_allow_html=True)
 with c3:
     pct_residencia = (df_filt['local_ocorrencia'] == 1).sum() / len(df_filt) * 100
-    st.markdown(render_metric("Ocorrência em Casa", f"{pct_residencia:.1f}%", "Local mais frequente"), unsafe_allow_html=True)
+    st.markdown(render_metric("Ocorrência em Casa (SINAN)", f"{pct_residencia:.1f}%", "Local mais frequente"), unsafe_allow_html=True)
 with c4:
     pct_fisica = df_filt['ocorreu_violencia_fisica'].sum() / len(df_filt) * 100
-    st.markdown(render_metric("Violência Física", f"{pct_fisica:.1f}%", "Tipo predominante"), unsafe_allow_html=True)
+    st.markdown(render_metric("Violência Física (SINAN)", f"{pct_fisica:.1f}%", "Tipo predominante"), unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
@@ -53,7 +63,7 @@ with tab1:
     col_l, col_r = st.columns(2)
 
     with col_l:
-        st.markdown(section_header("📊 Distribuição Etária (SINAN)"), unsafe_allow_html=True)
+        st.markdown(section_header("📊 Distribuição Etária (Base 🏥 SINAN)"), unsafe_allow_html=True)
         
         idades = df_filt['idade_paciente'].dropna()
         idades = idades[(idades >= 0) & (idades <= 100)]
@@ -69,12 +79,12 @@ with tab1:
         # Adicionar linha de média
         fig_idade.add_vline(x=idade_media, line_dash="dash", line_color=COLORS['warning'],
                            annotation_text=f"Média: {idade_media:.1f}", annotation_position="top")
-        fig_idade.update_layout(title="Distribuição Etária das Vítimas", xaxis_title="Idade", yaxis_title="Frequência")
+        fig_idade.update_layout(title="Distribuição Etária das Vítimas (Base 🏥 SINAN)", xaxis_title="Idade", yaxis_title="Frequência")
         apply_theme(fig_idade, height=400, show_legend=False)
         st.plotly_chart(fig_idade, use_container_width=True)
 
     with col_r:
-        st.markdown(section_header("🎨 Raça/Cor (SINAN)"), unsafe_allow_html=True)
+        st.markdown(section_header("🎨 Raça/Cor (Base 🏥 SINAN)"), unsafe_allow_html=True)
 
         df_filt['raca_label'] = df_filt['raca_paciente'].map(RACA_PACIENTE_MAP)
         raca_counts = df_filt['raca_label'].value_counts().reset_index()
@@ -95,8 +105,8 @@ with tab1:
         apply_theme(fig_raca, height=400)
         st.plotly_chart(fig_raca, use_container_width=True)
 
-    # Comparação SIM
-    st.markdown(section_header("⚰️ Raça/Cor — Feminicídios (SIM) vs. Notificações (SINAN)"), unsafe_allow_html=True)
+    # Comparação SIM vs SINAN
+    st.markdown(section_header("⚖️ Comparativo Raça/Cor: Feminicídios (⚰️ SIM) vs. Notificações (🏥 SINAN)"), unsafe_allow_html=True)
 
     sim_filt = df_sim[(df_sim['ano'] >= ano_range[0]) & (df_sim['ano'] <= ano_range[1])]
     sim_raca = sim_filt['raca_cor'].value_counts().reset_index()
@@ -126,7 +136,7 @@ with tab1:
 
 # ─── Tab 2: Relação com Autor ────────────────────────────────────────
 with tab2:
-    st.markdown(section_header("💔 Relação da Vítima com o Autor"), unsafe_allow_html=True)
+    st.markdown(section_header("💔 Relação da Vítima com o Autor (Base 🏥 SINAN)"), unsafe_allow_html=True)
 
     autor_cols = {
         'autor_conjugue': 'Cônjuge',
@@ -173,7 +183,7 @@ with tab2:
     # Álcool
     col_a1, col_a2 = st.columns(2)
     with col_a1:
-        st.markdown(section_header("🍺 Uso de Álcool pelo Autor"), unsafe_allow_html=True)
+        st.markdown(section_header("🍺 Uso de Álcool pelo Autor (Base 🏥 SINAN)"), unsafe_allow_html=True)
         alcool = df_filt['autor_usou_alcool'].value_counts().reset_index()
         alcool.columns = ['Usou Álcool', 'Total']
         alcool['Usou Álcool'] = alcool['Usou Álcool'].map({1.0: 'Sim', 0.0: 'Não'})
@@ -190,7 +200,7 @@ with tab2:
         st.plotly_chart(fig_alc, use_container_width=True)
 
     with col_a2:
-        st.markdown(section_header("👫 Sexo do Autor"), unsafe_allow_html=True)
+        st.markdown(section_header("👫 Sexo do Autor (Base 🏥 SINAN)"), unsafe_allow_html=True)
         sexo_autor = df_filt['autor_sexo'].value_counts().reset_index()
         sexo_autor.columns = ['Sexo', 'Total']
         sexo_autor['Sexo'] = sexo_autor['Sexo'].map({1.0: 'Masculino', 2.0: 'Feminino', 3.0: 'Ambos'})
@@ -220,7 +230,7 @@ with tab3:
     col_t1, col_t2 = st.columns(2)
 
     with col_t1:
-        st.markdown(section_header("⚡ Tipos de Violência Sofrida"), unsafe_allow_html=True)
+        st.markdown(section_header("⚡ Tipos de Violência Sofrida (Base 🏥 SINAN)"), unsafe_allow_html=True)
 
         tipos = {
             'Violência Física': df_filt['ocorreu_violencia_fisica'].sum(),
@@ -242,7 +252,7 @@ with tab3:
         st.plotly_chart(fig_tipos, use_container_width=True)
 
     with col_t2:
-        st.markdown(section_header("🔪 Meios Utilizados"), unsafe_allow_html=True)
+        st.markdown(section_header("🔪 Meios Utilizados (Base 🏥 SINAN)"), unsafe_allow_html=True)
 
         meios = {
             'Força corporal': df_filt['meio_forca'].sum(),
@@ -272,7 +282,7 @@ with tab3:
 
 # ─── Tab 4: Local ────────────────────────────────────────────────────
 with tab4:
-    st.markdown(section_header("📍 Local da Ocorrência"), unsafe_allow_html=True)
+    st.markdown(section_header("📍 Local da Ocorrência (Base 🏥 SINAN)"), unsafe_allow_html=True)
 
     df_filt['local_label'] = df_filt['local_ocorrencia'].map(LOCAL_OCORRENCIA_MAP)
     local_counts = df_filt['local_label'].value_counts().reset_index()

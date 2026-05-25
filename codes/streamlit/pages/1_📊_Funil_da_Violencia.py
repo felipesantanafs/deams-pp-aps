@@ -21,7 +21,7 @@ st.markdown("""
 st.markdown(metric_card_css(), unsafe_allow_html=True)
 
 st.markdown("# 📊 Funil da Violência")
-st.markdown("*Evolução da cascata: Ameaças → Violência Física → Feminicídios (São Paulo, 2015–2019)*")
+st.markdown("*Análise consolidada da cascata: Ameaças e Violência Física (Base 🏥 SINAN) ➔ Feminicídios (Base ⚰️ SIM/DataSUS) — São Paulo, 2015–2019*")
 st.markdown("---")
 
 # ─── Carregar dados ──────────────────────────────────────────────────
@@ -98,9 +98,9 @@ with col_chart:
 with col_table:
     st.markdown("#### Dados")
     display_df = funil.copy()
-    display_df.columns = ['Ano', 'Ameaças', 'V. Física', 'Notificações', 'Feminicídios']
+    display_df.columns = ['Ano', 'Ameaças (SINAN)', 'V. Física (SINAN)', 'Notificações (SINAN)', 'Feminicídios (SIM)']
     display_df['Ano'] = display_df['Ano'].astype(int)
-    for col in ['Ameaças', 'V. Física', 'Notificações']:
+    for col in ['Ameaças (SINAN)', 'V. Física (SINAN)', 'Notificações (SINAN)']:
         display_df[col] = display_df[col].astype(int)
     st.dataframe(display_df, hide_index=True, use_container_width=True)
 
@@ -143,10 +143,15 @@ st.plotly_chart(fig2, use_container_width=True)
 # ─── Insight ──────────────────────────────────────────────────────────
 st.markdown("""
 <div class="insight-box">
-    💡 <strong>Leitura do Funil</strong>: O crescimento contínuo das notificações (+357% em 5 anos)
+    💡 <strong>Leitura do Funil</strong>: O crescimento contínuo das notificações (+357% de 2015 a 2019)
     combinado com a queda dos feminicídios (−69%) é consistente com a hipótese de que
     o aumento de registros reflete <strong>redução da subnotificação</strong> (cifra oculta),
     não aumento real da violência. A ampliação do acesso institucional parece estar associada
     a uma maior proteção efetiva das vítimas.
+    <br><br>
+    ⚠️ <strong>Nota sobre a Variação YoY de 2016</strong>: O pico de variação percentual observado em 2016 
+    (ex. +129% em notificações) decorre principalmente do <strong>acoplamento da geolocalização via CNES</strong> 
+    e de uma expressiva melhora no fluxo de registro das notificações integradas a partir daquele ano. Trata-se, portanto, 
+    de uma variação administrativa de aprimoramento dos cadastros (redução da subnotificação), e não de um aumento epidemiológico real na ocorrência de violências na cidade.
 </div>
 """, unsafe_allow_html=True)

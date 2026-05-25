@@ -22,7 +22,7 @@ st.markdown("---")
 df_sinan = load_sinan_cnes()
 
 # Filtros
-ano_range = st.slider("Período SINAN", 2015, 2019, (2015, 2019), key="ddm_ano")
+ano_range = st.slider("Período (Base 🏥 SINAN)", 2015, 2019, (2015, 2019), key="ddm_ano")
 df_filt = df_sinan[
     (df_sinan['ano'] >= ano_range[0]) & 
     (df_sinan['ano'] <= ano_range[1])
@@ -39,11 +39,11 @@ taxa_dp_comum = (casos_dp_comum / total_casos) * 100 if total_casos > 0 else 0
 # ─── KPIs ─────────────────────────────────────────────────────────────
 c1, c2, c3 = st.columns(3)
 with c1:
-    st.markdown(render_metric("Total de Ocorrências", f"{total_casos:,.0f}".replace(',','.')), unsafe_allow_html=True)
+    st.markdown(render_metric("Total Ocorrências (SINAN)", f"{total_casos:,.0f}".replace(',','.')), unsafe_allow_html=True)
 with c2:
-    st.markdown(render_metric("Encaminhadas à DDM", f"{casos_ddm:,.0f}".replace(',','.'), f"{taxa_ddm:.1f}% do total"), unsafe_allow_html=True)
+    st.markdown(render_metric("Encaminhadas à DDM", f"{casos_ddm:,.0f}".replace(',','.'), f"{taxa_ddm:.1f}% (Base SINAN)"), unsafe_allow_html=True)
 with c3:
-    st.markdown(render_metric("Encaminhadas à DP Comum", f"{casos_dp_comum:,.0f}".replace(',','.'), f"{taxa_dp_comum:.1f}% do total", "down"), unsafe_allow_html=True)
+    st.markdown(render_metric("Encaminhadas à DP Comum", f"{casos_dp_comum:,.0f}".replace(',','.'), f"{taxa_dp_comum:.1f}% (Base SINAN)", "down"), unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
@@ -90,7 +90,7 @@ col1, col2 = st.columns(2)
 
 # ─── Gráfico 1: Evolução do Encaminhamento DDM ───────────────────────
 with col1:
-    st.markdown(section_header("📈 Evolução da Taxa de Encaminhamento DDM"), unsafe_allow_html=True)
+    st.markdown(section_header("📈 Evolução da Taxa de Encaminhamento DDM (Base 🏥 SINAN)"), unsafe_allow_html=True)
     
     evol_ddm = df_filt.groupby('ano').agg(
         total=('encaminhamento_delegacia_mulher', 'count'),
@@ -114,7 +114,7 @@ with col1:
 
 # ─── Gráfico 2: DDM por Horário da Ocorrência ────────────────────────
 with col2:
-    st.markdown(section_header("⏰ Encaminhamento vs. Horário da Ocorrência"), unsafe_allow_html=True)
+    st.markdown(section_header("⏰ Encaminhamento vs. Horário da Ocorrência (Base 🏥 SINAN)"), unsafe_allow_html=True)
     
     df_hora = df_filt[df_filt['hora'].notna()].copy()
     
@@ -145,7 +145,7 @@ with col2:
 
 # ─── Gráfico 3: Taxa de Encaminhamento DDM por Bairro (Scatter) ──────
 st.markdown("---")
-st.markdown(section_header("📍 Taxa de Encaminhamento DDM por Bairro e Volume de Casos"), unsafe_allow_html=True)
+st.markdown(section_header("📍 Taxa de Encaminhamento DDM por Bairro (Base 🏥 SINAN)"), unsafe_allow_html=True)
 
 df_bairro = df_filt.groupby('bairro').agg(
     total=('encaminhamento_delegacia_mulher', 'count'),

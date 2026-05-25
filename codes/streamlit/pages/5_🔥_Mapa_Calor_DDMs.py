@@ -138,8 +138,8 @@ with col_map:
         lat="latitude",
         lon="longitude",
         radius=12,
-        zoom=9.8,
-        center={"lat": -23.58, "lon": -46.64},
+        zoom=10.0,
+        center={"lat": -23.5505, "lon": -46.6333},
         mapbox_style="carto-darkmatter",
         color_continuous_scale="Viridis",
         opacity=0.6,
@@ -156,7 +156,7 @@ with col_map:
         marker=go.scattermapbox.Marker(
             size=14,
             color=COLORS['danger'],
-            symbol='police' if 'police' in ['police'] else 'circle' # fallback to circle if not supported
+            symbol='circle'
         ),
         text=ddms_df['Nome'],
         textposition="top right",
